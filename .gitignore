@@ -13,3 +13,5 @@ geo/
 __pycache__/
 *.log
 .DS_Store
+fetch*.sh
+rids.txt

@@ -1,0 +1,15 @@
+# Raw scrapes and the full database contain program contacts (names, emails, phones).
+# Only the redacted build in docs/ is meant to be published. Rebuild it with: python3 build_static.py
+residency.db
+details/
+excluded/
+residency-*.html
+
+# Geocoding caches: the Census gazetteer downloads are large and re-downloadable.
+# geo/census_*.csv holds program street addresses only, but is a cache too.
+geo/
+
+# Local clutter
+__pycache__/
+*.log
+.DS_Store

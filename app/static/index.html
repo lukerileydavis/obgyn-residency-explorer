@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OB/GYN Program Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="#/">OB/GYN Program Atlas</a>
+  <nav>
+    <a href="#/" data-nav="programs">Programs</a>
+    <a href="#/map" data-nav="map">Map</a>
+    <a href="#/distributions" data-nav="distributions">Distributions</a>
+    <a href="#/compare" data-nav="compare">Compare <span id="cmp-count"></span></a>
+  </nav>
+  <div class="yearfilter" title="Each program reports its own survey year. Narrow to recent data before comparing.">
+    <label for="minyear">Data year</label>
+    <select id="minyear">
+      <option value="">All years</option>
+      <option value="2020">2020 or later</option>
+      <option value="2022">2022 or later</option>
+      <option value="2023">2023 or later</option>
+      <option value="2024">2024 or later</option>
+    </select>
+    <label class="chk"><input type="checkbox" id="undated" checked> include estimated</label>
+    <span id="filtercount" class="muted"></span>
+  </div>
+</header>
+<main id="main"><p class="loading">Loading programs…</p></main>
+<div id="tray" hidden></div>
+<div id="tip" role="tooltip" hidden></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>

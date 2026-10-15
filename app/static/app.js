@@ -394,7 +394,7 @@ function viewProgram(rid) {
       <section><h2>Current residents</h2><div data-slot="res"></div><div data-slot="restable"></div></section>
       <section><h2>Salary & benefits</h2><div data-slot="sal"></div><div data-slot="ben"></div></section>
       <section><h2>Outcomes</h2><div data-slot="out"></div><h3>Where graduates go</h3><div data-slot="dest"></div></section>
-      <section class="span2"><h2>Procedures</h2><p class="note">${GROUPS.find(g => g.id === 'procedures').note}</p><div class="two" data-slot="proc"></div></section>
+      <section class="span2"><h2>Procedures</h2><p class="note">${GROUPS.find(g => g.id === 'procedures').note}</p>${p.proc_note ? `<p class="flag">Adjusted: ${esc(p.proc_note)}</p>` : ''}<div class="two" data-slot="proc"></div></section>
       <section class="span2"><h2>Faculty & fellowships</h2><p class="note">${GROUPS.find(g => g.id === 'faculty').note}</p><div class="two" data-slot="fac"></div><h3>Fellowships at the institution</h3><div data-slot="fel"></div></section>
       <section class="span2"><h2>Training structure</h2><div data-slot="train"></div></section>
       <section><h2>Conferences</h2><div data-slot="conf"></div></section>
@@ -410,6 +410,7 @@ function viewProgram(rid) {
         <dt>Data year</dt><dd>${esc(yearTitle(p))}</dd>
         <dt>Accreditation</dt><dd>${esc(p.q5_accreditation_status || '—')}${p.q5_year_of_last_accreditation ? `, last ${p.q5_year_of_last_accreditation}` : ''}</dd>
         <dt>Map location</dt><dd>${esc(GEO[p.geocode_method] || '—')}${p.geocode_query ? `<span class="rdesc">${esc(p.geocode_query)}</span>` : ''}</dd>
+        ${p.proc_note ? `<dt>Procedures</dt><dd>${esc(p.proc_note)}</dd>` : ''}
         <dt>APGO ID</dt><dd>${p.rid}</dd>
       </dl>${notes.length ? `<h3>Cleaning notes</h3><ul class="notes">${notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}</section>
     </div>

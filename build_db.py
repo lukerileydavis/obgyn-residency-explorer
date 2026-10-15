@@ -10,6 +10,11 @@ from parse_detail import parse
 RIDS = sorted(int(x) for x in open('rids-gt230.txt').read().split())
 CANADA = {'AB','BC','MB','NB','NL','NS','NT','NU','ON','PE','QC','SK','YT'}
 
+# Programs whose q25 case-log "medians" are class totals: every category is ~3-6x the field and dividing by
+# positions offered lands on ordinary medians. rid -> reported spontaneous vaginal deliveries, so the fix only
+# applies to the listing we checked; if the program re-reports, the build warns and leaves the new numbers alone.
+PROC_CLASS_TOTALS = {72: 946, 282: 990}
+
 
 def slug(s, n=48):
     s = re.sub(r'[^a-z0-9]+', '_', s.lower()).strip('_')
@@ -212,7 +217,7 @@ def build():
     cols = [('rid', 'INTEGER PRIMARY KEY'), ('name', 'TEXT'), ('city', 'TEXT'), ('state_province', 'TEXT'), ('country', 'TEXT'),
             ('detail_url', 'TEXT'), ('last_updated', 'TEXT'), ('data_year', 'INTEGER'), ('account_id', 'TEXT')]
     cols += [(rn(k), coltype[t]) for k, t in kind.items()]
-    cols += [('conferences_json', 'TEXT'), ('hospitals_json', 'TEXT'), ('data_notes', 'TEXT'), ('raw_json', 'TEXT')]
+    cols += [('conferences_json', 'TEXT'), ('hospitals_json', 'TEXT'), ('proc_note', 'TEXT'), ('data_notes', 'TEXT'), ('raw_json', 'TEXT')]
 
     con = sqlite3.connect('residency.db'); con.execute('DROP TABLE IF EXISTS programs')
     con.execute('CREATE TABLE programs (' + ', '.join(f'"{n}" {t}' for n, t in cols) + ')')
@@ -242,6 +247,15 @@ def build():
             elif t == 'email': out = v.lower() or None
             else: out = v or None
             row[rn(k)] = out
+        if rid in PROC_CLASS_TOTALS:
+            svd, n = row.get('q25_spontaneous_vaginal_deliveries'), row.get('q26_positions_offered')
+            if svd != PROC_CLASS_TOTALS[rid] or not n:
+                print(f'warning: rid {rid} q25 no longer matches the class-total listing (svd={svd}, class={n}); left as reported')
+            else:
+                for k in [k for k in row if k.startswith('q25_') and row[k] is not None]: row[k] = round(row[k] / n)
+                row['proc_note'] = (f'Procedure counts divided by class size ({n}). The listing reported several times the typical '
+                                    'program in nearly every category, consistent with whole-class totals entered as per-graduate medians.')
+                notes.append(f'q25: all procedure counts divided by positions offered ({n}); reported values kept in raw_json')
         for c in conf: c['times_per_month'] = num(c['times_per_month'])
         for h in hosp: h['pct'] = num(h['pct'])
         hosp = [h for h in hosp if h['name'] or h['pct'] is not None]
